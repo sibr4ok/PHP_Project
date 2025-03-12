@@ -9,11 +9,16 @@ session_start();
 require_once 'config.php';
 require_once 'core/base/settings/internal_settings.php';
 
-function load1($class_name){
-    $class_name = str_replace('\\', '/', $class_name);
-    include  $class_name.'.php';
+use \core\base\exceptions\RouteException;
+use \core\base\controllers\RouteController;
+
+try
+{
+    RouteController::getInstance()->route();
 }
+//обработка исключения
+catch(RouteException $e)
+{
+    exit($e->getMessage());
 
-spl_autoload_register('load1');
-
-new \n1\A();
+}
