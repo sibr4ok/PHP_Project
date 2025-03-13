@@ -1,6 +1,8 @@
 <?php
 
 namespace core\base\controllers;
+use core\base\settings\Settings;
+use core\base\settings\ShopSettings;
 
 class RouteController
 {
@@ -13,5 +15,11 @@ class RouteController
         }
 
         return self::$_instance = new self;
+    }
+    private function __construct()
+    {
+        $s = Settings::instance('routes');
+        $s1 = ShopSettings::instance('routes');
+        exit();
     }
 }
