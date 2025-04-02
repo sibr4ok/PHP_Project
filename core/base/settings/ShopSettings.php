@@ -15,11 +15,13 @@ class ShopSettings
     ];
 
     private $routes = [
-        'admin' => [
-            'name' => 'sudo'
-        ]
-
+        'plugins'=> [
+            'path' => 'core/plugins/',
+            'hrUrl'=> false,
+            'dir' => 'controller'
+        ],
     ];
+
     static public function get($property){
         return self::instance()->$property;
     }

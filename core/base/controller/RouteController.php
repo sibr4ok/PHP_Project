@@ -34,7 +34,7 @@ class RouteController
     {
         $adress_str = $_SERVER['REQUEST_URI'];
 
-        if(strrpos($adress_str, '/') === strlen($adress_str) - 1 && strrpos($adress_str, '/') !== 0){
+        if(strpos($adress_str, '/') === strlen($adress_str) - 1 && strrpos($adress_str, '/') !== 0){
             //$this->redirect(rtrim($adress_str, '/'), 301);
         }
 
@@ -48,8 +48,39 @@ class RouteController
                 throw new RouteException('Сайт находиться на техническом обслуживаниии');
             }
 
-            if(strrpos($adress_str, $this->routes['admin']['alias']) === strlen(PATH)){
-                //административная панель
+            if(strpos($adress_str, $this->routes['admin']['alias']) === strlen(PATH)){
+                
+                $url = explode('/', substr($adress_str,strlen(PATH . $this->routes['admin']['alias']) +1));
+
+                if($url[0] && is_dir($_SERVER['DOCUMENT_ROOT'] . PATH . $this->routes['plugins']['path'] . $url[0])){
+
+                    $plugin = array_shift($url);//выбросим из массива 0 элемент - название плагина
+
+                    $pluginSettings = $this->routes['settings']['path'] . ucfirst($plugin . 'Settings');
+
+                    if(file_exists($_SERVER['DOCUMENT_ROOT'] . PATH . $pluginSettings . '.php')){
+                        $pluginSettings = str_replace('/', '\\', $pluginSettings);//получили имя ссылающий на нужный нам класс
+                        
+                        $this->routes = $pluginSettings::get('routes');//обновляем settings
+                    }
+
+                    $dir = $this->routes['plugins']['dir'] ? '/' . $this->routes['plugins']['dir'] . '/' : '/';
+                    $dir = str_replace('//', '/', $dir);//защита от двойных слешей
+
+                    $this->controller = $this->routes['plugins']['core'] . $plugin . $dir;
+
+                    $hrUrl = $this->routes['plugins']['hrUrl'];
+
+                    $route = 'plugins';
+
+                }else{
+                    $this->controller = $this->routes['admin']['path'];
+
+                    $hrUrl = $this->routes['admin']['hrUrl'];
+
+                    $route = 'admin';
+                }
+
             }else{
                 $url = explode('/', substr($adress_str,strlen(PATH)));//массив из адресов
 
@@ -60,7 +91,29 @@ class RouteController
                 $route = 'user';
             }
 
-            $this->createRoute($route, $url);
+            $this->createRoute($route, $url);//создает маршрут
+
+            if($url[1]){  //параметры
+                $count = count($url);
+                $key = '';
+
+                if(!$hrUrl){
+                    $i = 1;
+                }else{
+                    $this->parameters['alias'] = $url[1];
+                    $i = 2;
+                }
+
+                for( ; $i < $count; $i++){
+                    if(!$key){
+                        $key = $url[$i];
+                        $this->parameters[$key] = '';
+                    }else{
+                        $this->parameters[$key] = $url[$i];
+                        $key = '';
+                    }
+                }
+            }
 
             exit();
         
