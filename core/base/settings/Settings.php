@@ -7,7 +7,7 @@ class Settings{
 
     private $routes = [
         'admin' => [
-            'name' => 'admin',
+            'alias' => 'admin',
             'path' => 'core/admin/controller/',
             'hrUrl' => false
         ],
@@ -19,9 +19,12 @@ class Settings{
             'hrUrl'=> false
         ],
         'user'=>[
-            'paht' => 'core/user/controller/',
+            'path' => 'core/user/controller/',
             'hrUrl' => true,
-            'routes' => []
+            'routes' => [
+                //alias маршрутов
+                'catalog' => 'site'
+            ]
         ],
         'default' => [
             'controller' => 'IndexController',
@@ -34,8 +37,6 @@ class Settings{
         'text' => ['name', 'phone', 'adress'],
         'textarea' => ['content', 'keywords']
     ];
-    
-    private $lalala = 'lalal';
 
     private function __construct()
     {
@@ -47,7 +48,7 @@ class Settings{
         
     }
 
-    static public function get($property){
+    static public function get($property){   //через get будем обращатся к приватным свойствам
         return self::instance()->$property;
     }
 
@@ -84,7 +85,7 @@ class Settings{
         foreach($arrays as $array){
             foreach($array as $key => $value){
                 if(is_array($value) && is_array($base[$key])){
-                    $base[$key] = $this->arrayMergeRecursive($base[$key], $value);
+                    $base[$key] = $this->arrayMergeRecursive($base[$key], $value);//Рекурсивный метод
                 }else{
                     if(is_int($key)){//проверяет целое число
                         if(!in_array($value, $base)){  //проверяет существуе значение в массиве
