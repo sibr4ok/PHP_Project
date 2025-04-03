@@ -67,7 +67,7 @@ class RouteController
                     $dir = $this->routes['plugins']['dir'] ? '/' . $this->routes['plugins']['dir'] . '/' : '/';
                     $dir = str_replace('//', '/', $dir);//защита от двойных слешей
 
-                    $this->controller = $this->routes['plugins']['core'] . $plugin . $dir;
+                    $this->controller = $this->routes['plugins']['path'] . $plugin . $dir;
 
                     $hrUrl = $this->routes['plugins']['hrUrl'];
 
