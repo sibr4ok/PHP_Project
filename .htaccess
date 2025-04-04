@@ -9,3 +9,5 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 
 RewriteRule ^(.*) index.php
+
+php_flag display_errors off

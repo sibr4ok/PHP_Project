@@ -27,7 +27,6 @@ class Settings{
             'hrUrl' => true,
             'routes' => [
                 //alias маршрутов
-                'catalog' => 'site'
             ]
         ],
         'default' => [

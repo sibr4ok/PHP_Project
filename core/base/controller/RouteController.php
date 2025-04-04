@@ -6,17 +6,12 @@ use core\base\exceptions\RouteException;
 use core\base\settings\Settings;
 use core\base\settings\ShopSettings;
 
-class RouteController
+class RouteController extends BaseController
 {
     //шаблон пректирования singleton
     static private $_instance;
 
     protected $routes;
-
-    protected $controller;
-    protected $inputMethod;
-    protected $outputMethod;
-    protected $parameters;
 
     private function __clone()
     {
@@ -48,10 +43,12 @@ class RouteController
                 throw new RouteException('Сайт находиться на техническом обслуживаниии');
             }
 
-            if(strpos($adress_str, $this->routes['admin']['alias']) === strlen(PATH)){
-                
-                $url = explode('/', substr($adress_str,strlen(PATH . $this->routes['admin']['alias']) +1));
+            $url = explode('/', substr($adress_str,strlen(PATH)));//массив из адресов
 
+            if($url[0] && $url[0] === $this->routes['admin']['alias']){
+
+                array_shift($url);
+                
                 if($url[0] && is_dir($_SERVER['DOCUMENT_ROOT'] . PATH . $this->routes['plugins']['path'] . $url[0])){
 
                     $plugin = array_shift($url);//выбросим из массива 0 элемент - название плагина
@@ -82,8 +79,7 @@ class RouteController
                 }
 
             }else{
-                $url = explode('/', substr($adress_str,strlen(PATH)));//массив из адресов
-
+                
                 $hrUrl = $this->routes['user']['hrUrl'];//дает понимание разбирать ли массив на параметры
 
                 $this->controller = $this->routes['user']['path'];
@@ -115,7 +111,7 @@ class RouteController
                 }
             }
 
-            exit();
+            //exit();
         
         }else{
             try{

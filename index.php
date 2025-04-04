@@ -14,8 +14,8 @@ use \core\base\controller\RouteController;
 
 try
 {
-    //RouteController::getInstance()->route();
-    RouteController::getInstance();
+    RouteController::getInstance()->route();
+
 }
 //обработка исключения
 catch(RouteException $e)
