@@ -29,8 +29,8 @@ class RouteController extends BaseController
     {
         $adress_str = $_SERVER['REQUEST_URI'];
 
-        if(strpos($adress_str, '/') === strlen($adress_str) - 1 && strrpos($adress_str, '/') !== 0){
-            //$this->redirect(rtrim($adress_str, '/'), 301);
+        if(strrpos($adress_str, '/') === strlen($adress_str) - 1 && strrpos($adress_str, '/') !== 0){
+            $this->redirect(rtrim($adress_str, '/'), 301);
         }
 
         $path = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], 'index.php'));
