@@ -6,29 +6,6 @@ use DateTime;
 
 trait BaseMethods
 {
-    protected $styles;
-    protected $scripts;
-    
-    protected function init($admin = false){
-        if(!$admin){
-            if(USERS_CSS_JS['styles']){
-                foreach(USERS_CSS_JS['styles'] as $item) $this->styles[] = PATH . TEMPLATE . trim($item, '/');
-            }
-
-            if(USERS_CSS_JS['scripts']){
-                foreach(USERS_CSS_JS['scripts'] as $item) $this->scripts[] = PATH . TEMPLATE . trim($item, '/');
-            }
-        }else{
-            if(ADMIN_CSS_JS['styles']){
-                foreach(ADMIN_CSS_JS['styles'] as $item) $this->styles[] = PATH . ADMIN_TEMPLATE . trim($item, '/');
-            }
-
-            if(ADMIN_CSS_JS['scripts']){
-                foreach(ADMIN_CSS_JS['scripts'] as $item) $this->scripts[] = PATH . ADMIN_TEMPLATE . trim($item, '/');
-            }
-        }
-
-    }
 
     protected function clearStr($str){
         if(is_array($str)){

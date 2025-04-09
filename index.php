@@ -14,7 +14,7 @@ use \core\base\controller\RouteController;
 
 try
 {
-    RouteController::getInstance()->route();
+    RouteController::instance()->route();
 
 }
 //обработка исключения
