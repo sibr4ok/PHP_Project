@@ -24,11 +24,12 @@ const USERS_CSS_JS = [
 ];
 
 use \core\base\exceptions\RouteException;
-//автозагрузка классов
+#автозагрузка классов
 function autoloadMainClasses($class_name){
-    $class_name = str_replace('\\', '/', $class_name);//принимает на вход символы \\ и заменяет на /, ищя в строке $class_name
+    #принимает на вход символы \\ и заменяет на /, ищя в строке $class_name
+    $class_name = str_replace('\\', '/', $class_name);
     if(!@include_once  $class_name.'.php'){
-        new RouteException('Неверное имя файла для подключения - '.$class_name);
+            new RouteException('Неверное имя файла для подключения - '.$class_name);
     }
 }
 

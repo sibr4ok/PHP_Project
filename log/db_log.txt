@@ -1,0 +1,4 @@
+Fault: 12-04-2025 15:49:02 - Unknown column 'name1' in 'field list'
+file /home/dima/PHP_Project/core/base/model/BaseModel.php
+In line 72
+

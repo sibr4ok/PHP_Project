@@ -11,6 +11,7 @@ require_once 'core/base/settings/internal_settings.php';
 
 use \core\base\exceptions\RouteException;
 use \core\base\controller\RouteController;
+use core\base\exceptions\DbException;
 
 try
 {
@@ -19,6 +20,11 @@ try
 }
 //обработка исключения
 catch(RouteException $e)
+{
+    exit($e->getMessage());
+
+}
+catch(DbException $e)
 {
     exit($e->getMessage());
 
