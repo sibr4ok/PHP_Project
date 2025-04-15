@@ -72,4 +72,36 @@ class BaseModel
             throw new DbException($e->getMessage());
         }
     }
+
+    /** $table - Таблица баз данных, $set - массив для запроса
+     * 'fields' => ['id', 'name'],
+     * 'where' => ['id' => 1, 'name' => 'Masha'],
+     * 'operand' => ['<>', '='],
+     * 'condition' => ['AND'],
+     * 'order' => ['fio', 'name'], 
+     * 'order_direction' => ['ASC','DESC'],
+     * 'limit' => '1' */
+
+    final public function get($table, $set = [])
+    {
+        $fields = $this->createFields($table, $set);
+        $where = $this->createWhere($table, $set);
+
+        $join_arr = $this->createJoin($table,$set);
+
+        $fields .= $join_arr['fields'];
+        $fields = rtrim($fields, ',');
+
+        $join = $join_arr['join'];
+        $where = $join_arr['where'];  
+
+        $order = $this->createOrder($table, $set);
+
+        $limit = $set['limit'] ? $set['limit'] : '';
+
+        $query = "SELECT $fields FROM $table $join $where $order $limit";
+
+        return $this->query($query);
+    }
+
 }

@@ -13,9 +13,16 @@ class IndexController extends BaseController{
 
         $db = Model::instance();
 
-        $query = "SELECT * FROM articles";
-
-        $res = $db->query($query);
+        $table = "teachers";
+        $res = $db->get($table, [
+            'fields' => ['id', 'name'],
+            'where' => ['id' => 1, 'name' => 'Masha'],
+            'operand' => ['<>', '='],
+            'condition' => ['AND'],
+            'order' => ['fio', 'name'], 
+            'order_direction' => ['ASC','DESC'],
+            'limit' => '1'
+        ]);
 
         exit('I am admin panel');
     }
