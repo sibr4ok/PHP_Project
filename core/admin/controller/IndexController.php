@@ -16,8 +16,8 @@ class IndexController extends BaseController{
         $table = "teachers";
         $res = $db->get($table, [
             'fields' => ['id', 'name'],
-            'where' => ['id' => 1, 'name' => 'Masha'],
-            'operand' => ['<>', '='],
+            'where' => ['name' => 'Masha, Ivan, Igor', 'id' => 1, ],
+            'operand' => ['IN', '='],
             'condition' => ['AND'],
             'order' => ['fio', 'name'], 
             'order_direction' => ['ASC','DESC'],
