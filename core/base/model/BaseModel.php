@@ -109,30 +109,31 @@ class BaseModel
 
     final public function get($table, $set = [])
     {
-        $fields = $this->createFields($table, $set);
-        $where = $this->createWhere($table, $set);
+        $fields = $this->createFields($set, $table);
+
+        $order = $this->createOrder($set, $table);
+
+        $where = $this->createWhere($set, $table);
 
         if(!$where) $new_where = true;
             else $new_where = false;
 
-        $join_arr = $this->createJoin($table, $set, $new_where);
+        $join_arr = $this->createJoin($set, $table, $new_where);
 
         $fields .= $join_arr['fields'];
         $fields = rtrim($fields, ',');
 
         $join = $join_arr['join'];
-        $where = $join_arr['where'];  
+        $where .= $join_arr['where'];  
 
-        $order = $this->createOrder($table, $set);
-
-        $limit = $set['limit'] ? $set['limit'] : '';
+        $limit = $set['limit'] ? 'LIMIT ' . $set['limit'] : '';
 
         $query = "SELECT $fields FROM $table $join $where $order $limit";
 
         return $this->query($query);
     }
 
-    protected function createFields($table = false, $set){
+    protected function createFields($set, $table = false){
 
         $set['fields'] = is_array($set['fields']) && !empty($set['fields'])
                          ? $set['fields'] : ['*']; 
@@ -149,7 +150,7 @@ class BaseModel
 
     }
 
-    protected function createOrder($table = false, $set){
+    protected function createOrder($set, $table = false){
     
         $table = $table ? $table . '.': ''; 
 
@@ -184,7 +185,7 @@ class BaseModel
         return $order_by;
     }
 
-    protected function createWhere($table = false, $set, $instruction = 'WHERE'){
+    protected function createWhere($set, $table = false, $instruction = 'WHERE'){
      
         $table = $table ? $table . '.': '';
 
@@ -227,7 +228,7 @@ class BaseModel
 
                 if($operand === 'IN' || $operand === 'NOT IN'){
 
-                    if(is_string($item) && strpos($item , 'SELECT')){
+                    if(is_string($item) && strpos($item , 'SELECT') === 0){
 
                         $in_str = $item;
                     }else{
@@ -239,7 +240,7 @@ class BaseModel
 
                         foreach($temp_item as $v){
 
-                            $in_str .= "'" . trim($v) . "',";
+                            $in_str .= "'" . addslashes(trim($v)) . "',";
                         }
                     }
                     $where .= $table . $key . ' ' . $operand . ' (' . rtrim($in_str , ',') . ') ' . $condition;
@@ -258,14 +259,14 @@ class BaseModel
                         }
                     }
 
-                    $where .= $table . $key . ' LIKE ' . "'" . $item . "' " . $condition;
+                    $where .= $table . $key . ' LIKE ' . "'" . addslashes($item) . "' " . $condition;
                     
                 }else{
                     
                     if(strpos($item, 'SELECT') === 0){
-                        $where .= $table . $key . ' ' . $operand . ' (' . $item . ') ' . $condition;
+                        $where .= $table . $key . ' ' . $operand . ' (' . addslashes($item) . ') ' . $condition;
                     }else{
-                        $where .= $table . $key . ' ' . $operand . " '" . $item . "' " . $condition;
+                        $where .= $table . $key . ' ' . $operand . " '" . addslashes($item) . "' " . $condition;
                     }
 
                 }
@@ -278,7 +279,7 @@ class BaseModel
 
     }
 
-    protected function createJoin($table, $set, $new_where = false){
+    protected function createJoin($set, $table, $new_where = false){
         
         $fields = '';
         $join = '';
@@ -301,9 +302,10 @@ class BaseModel
 
                     $join_fields = [];
 
+
                     switch (2){
 
-                        case count($item['on']['fields']):
+                        case isset($item['on']['fields']) && count($item['on']['fields']):
                             $join_fields = $item['on']['fields'];
                             break;
 
@@ -340,9 +342,9 @@ class BaseModel
                         $group_condition = $item['group_condition'] ? strtoupper($item['group_condition']) : 'AND';
                     }
 
-                    $fields .= $this->createFields($key, $item);
+                    $fields .= $this->createFields($item, $key);
 
-                    $where .= $this->createWhere($key, $item, $group_condition);
+                    $where .= $this->createWhere($item, $key, $group_condition);
 
                 }
 
