@@ -145,23 +145,86 @@ class BaseModel extends BaseModelMethods
      * return mixed
      */
 
-    final public function add($table, $set){
+    final public function add($table, $set = []){
 
-        $set['fields'] = (is_array($set['fields'])) && !empty($set['fields']) ? $set['fields'] : false;
+        $set['fields'] = (is_array($set['fields'])) && !empty($set['fields']) ? $set['fields'] : $_POST;
         $set['files'] = (is_array($set['files'])) && !empty($set['files']) ? $set['files'] : false;
+
+        if(!$set['fields'] && !$set['files']) return false;
+
         $set['return_id'] = $set['return_id'] ? true : false;
         $set['except'] = (is_array($set['except'])) && !empty($set['except']) ? $set['except'] : false;
 
         $insert_arr = $this->createInsert($set['fields'], $set['files'], $set['except']);
 
         if($insert_arr){
-            //"INSEPT INTO teachers (name, surname, age) VALUES ('masha', 'sergeivna', '21'),('Slavia', 'Persunova', '19')"
+            //INSERT INTO teachers (name, surname, age) VALUES ('masha', 'sergeivna', '21'),('Slavia', 'Persunova', '19')
             $query = "INSERT INTO $table ({$insert_arr['fields']}) VALUES ({$insert_arr['values']})";
 
             return $this->query($query, 'c', $set['return_id']);
         }
 
         return false;
+    }
+
+
+    /**
+     * 'fields' => ['name' => 'Sveta'],
+     * 'files' => $files,
+     * 'where' => ['id' => 1]
+     */
+    final public function edit($table, $set = []){
+
+        $set['fields'] = (is_array($set['fields'])) && !empty($set['fields']) ? $set['fields'] : $_POST;
+        $set['files'] = (is_array($set['files'])) && !empty($set['files']) ? $set['files'] : false;
+
+        if(!$set['fields'] && !$set['files']) return false;
+
+        $set['except'] = (is_array($set['except'])) && !empty($set['except']) ? $set['except'] : false;
+
+        if(!$set['all_rows']){
+
+            if($set['where']){
+                $where = $this->createWhere($set);
+            }else{
+                $columns = $this->showColumns($table);
+
+                if(!$columns) return false;
+
+                if($columns['id_row'] && $set['fields'][$columns['id_row']]){//id_row
+                    $where = 'WHERE ' . $columns['id_row'] . '=' . $set['fields'][$columns['id_row']];
+                    unset($set['fields'][$columns['id_row']]);
+                }
+            }
+
+        }
+
+        $update = $this->createUpdate($set['fields'], $set['files'], $set['except']);
+
+        //UPDATE table SET name='slavia',surname='Persunova' WHERE id=1
+        $query = "UPDATE $table SET $update $where";
+
+        return $this->query($query, 'u');
+    }
+
+    final public function showColumns($table){
+
+        $query = "SHOW COLUMNS FROM $table";
+        $res = $this->query($query);
+
+        $columns = [];
+
+        if($res){
+
+            foreach($res as $row){
+                $columns[$row['Field']] = $row;
+                if($row['Key'] === 'PRI'){
+                    $columns['id_row'] = $row['Field'];
+                }
+            }
+
+        }
+        return $columns;
     }
 
 }

@@ -15,17 +15,17 @@ class IndexController extends BaseController{
 
         $table = "teachers";
 
-        $files['gallery_img'] = ['red', 'blue', 'black'];
+        $files['gallery_img'] = ['old_red.jpj'];
         $files['img'] = 'main_img.jpg';
 
+        $_POST['id'] = 5;
+        $_POST['name'] = 'Miky';
+        $_POST['content'] = "<p>'miky_song</p>";
 
-        $res = $db->add($table, [
-            'fields' => ['name' => 'Slavia', 'content' => 'hello'],
-            'except'=> ['name'],
-            'files' => $files
-        ]);
 
-        exit('id = ' . $res['id'] . 'Name = ' . $res['name']);
+        $res = $db->edit($table);
+
+        exit('i`m admin panel');
     }
 
     protected function outputData(){
