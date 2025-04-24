@@ -157,6 +157,7 @@ abstract class BaseModelMethods{
         $fields = '';
         $join = '';
         $where = '';
+        $tables = '';
 
         if($set['join']){
 
@@ -203,6 +204,8 @@ abstract class BaseModelMethods{
 
                     $join_table = $key;
 
+                    $tables .= ',' . trim($join_table);
+
                     if($new_where){
 
                         if($item['where']){
@@ -224,7 +227,7 @@ abstract class BaseModelMethods{
             }
 
         }
-        return compact('fields', 'where', 'join');
+        return compact('fields', 'where', 'join', 'tables');
     }
 
     protected function createInsert($fields, $files, $except){
@@ -278,6 +281,8 @@ abstract class BaseModelMethods{
 
                 if(in_array($value, $this->sqlFunc)){
                     $update .= $value . ',';
+                }elseif($value === NULL){
+                    $update .= "NULL" . ',';
                 }else{
                     $update .= "'" . addslashes($value) . "',";
                 }

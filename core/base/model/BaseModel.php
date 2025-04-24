@@ -35,14 +35,14 @@ class BaseModel extends BaseModelMethods
      * $crud - метод для осуществления запроса = r - SELECT / c - INSEPT / d - DELETE
      * $return_id - идентификатор вставки
      */
-    final public function query($query, $crud = 'r', $return_id = false)
+    final public function query($query, $crud = "r", $return_id = false)
     {
         try{
             $result = $this->db->query($query);//   приходит объект содержащий выборку из баз данных
 
             switch($crud){
                 
-                case 'r':
+                case "r":
                     if($result->num_rows){  //  если что-то пришло из базы данных
 
                         $res = [];
@@ -58,7 +58,7 @@ class BaseModel extends BaseModelMethods
                     return false;
                     break;
 
-                case 'с':
+                case "c":
                     if($return_id) return $this->db->insert_id;
 
                     return true;
@@ -204,6 +204,81 @@ class BaseModel extends BaseModelMethods
         //UPDATE table SET name='slavia',surname='Persunova' WHERE id=1
         $query = "UPDATE $table SET $update $where";
 
+        return $this->query($query, 'u');
+    }
+
+    /** $table - Таблица баз данных, $set - массив для запроса:
+     * 'fields' => ['id', 'name'],
+     * 'where' => ['id' => 1, 'name' => 'Masha'],
+     * 'operand' => ['<>', '='],
+     * 'condition' => ['AND'], 
+     * 'join' => [
+     *   [
+     *       'table' => 'join_table1',
+     *       'fields' => ['id as j_id', 'name as j_name'],
+     *       'type' => 'left',
+     *       'where' => ['name' => 'sasha'],
+     *       'operand' => ['='],
+     *       'condition' => ['OR'],
+     *       'on' => ['id', 'parent_id'],
+     *       'group_condition' => 'AND'
+     *   ],
+     *   'join_table2' => [
+     *       'table' => 'join_table2',
+     *       'fields' => ['id as j2_id', 'name as j2_name'],
+     *       'type' => 'left',
+     *       'where' => ['name' => 'sasha'],
+     *       'operand' => ['='],
+     *       'condition' => ['AND'],
+     *       'on' => [
+     *           'table' => 'teachers',
+     *           'fields' => ['id', 'parent_id']
+     *       ]
+     *   ]
+     * ]
+     */
+
+
+    final public function delete($table, $set){
+
+        $table = trim($table);
+
+        $where = $this->createWhere($set,$table);
+
+        $columns = $this->showColumns($table);
+        
+        if(!$columns) return false;
+
+        if(is_array($set['fields']) && !empty($set['fields'])){
+
+            if($columns['id_row']){
+                $key = array_search($columns['id_row'], $set['fields']);
+                if($key !== false) unset($set['fields'][$key]);
+            }
+
+            $fields = [];
+
+            foreach($set['fields'] as $field){
+
+                $fields[$field] = $columns[$field]['Default'];
+
+            }
+
+            $update = $this->createUpdate($fields, false, false);
+
+            //UPDATE teachers SET name=NULL,img=NULL WHERE teachers.id = '2'
+            $query = "UPDATE $table SET $update $where";
+            
+        }else{
+
+            $join_arr = $this->createJoin($set, $table);
+            $join = $join_arr['join'];
+            $join_tables = $join_arr['tables'];
+
+            //DELETE category,products FROM category LEFT JOIN products ON category.id=products.parent_id WHERE id=1
+            $query = 'DELETE ' . $table . $join_tables . ' FROM ' . $table . ' ' . $join . ' ' . $where;
+
+        }
         return $this->query($query, 'u');
     }
 
