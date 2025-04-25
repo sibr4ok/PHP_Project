@@ -35,14 +35,14 @@ class BaseModel extends BaseModelMethods
      * $crud - метод для осуществления запроса = r - SELECT / c - INSEPT / d - DELETE
      * $return_id - идентификатор вставки
      */
-    final public function query($query, $crud = "r", $return_id = false)
+    final public function query($query, $crud = 'r', $return_id = false)
     {
         try{
             $result = $this->db->query($query);//   приходит объект содержащий выборку из баз данных
 
             switch($crud){
                 
-                case "r":
+                case 'r':
                     if($result->num_rows){  //  если что-то пришло из базы данных
 
                         $res = [];
@@ -58,7 +58,7 @@ class BaseModel extends BaseModelMethods
                     return false;
                     break;
 
-                case "c":
+                case 'c':
                     if($return_id) return $this->db->insert_id;
 
                     return true;

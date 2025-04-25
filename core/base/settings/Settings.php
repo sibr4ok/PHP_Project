@@ -39,10 +39,7 @@ class Settings{
         ]
     ];
 
-    private $teplateArr = [
-        'text' => ['name', 'phone', 'adress'],
-        'textarea' => ['content', 'keywords']
-    ];
+    private $defaultTable = 'teachers';
 
     static public function get($property){   //через get будем обращатся к приватным свойствам
         return self::instance()->$property;
