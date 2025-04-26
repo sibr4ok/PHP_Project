@@ -8,11 +8,11 @@ class ShowController extends BaseAdmin
     protected function inputData(){
 
         //parent::inputData() - не будет работать с плагинами
-        $this->exectBase(); 
+        $this->execBase(); 
 
-        $this->createTableData();
+        $this->createTableData();// определяет из какой таблицы тащить данные и выбирает колонки из таблицы
 
-        exit();
+        $this->createData(['fields' => ['content']]);// получает необходимые данные из текущей таблицы
 
     }
 
