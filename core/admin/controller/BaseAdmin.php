@@ -89,7 +89,13 @@ abstract class BaseAdmin extends BaseController
             }
 
             if($arr['fields']){
-                $fields = Settings::instance()->arrayMergeRecursive($fields, $arr['fields']);
+                if(is_array($arr['fields'])){
+                    $fields = Settings::instance()->arrayMergeRecursive($fields, $arr['fields']);
+                }else{
+                    //если строка
+                    $fields[] = $arr['fields'];
+                }
+                
             }
 
             if($this->columns['parent_id']){
@@ -108,10 +114,19 @@ abstract class BaseAdmin extends BaseController
                 }
             
             if($arr['order']){
-                $order = Settings::instance()->arrayMergeRecursive($order, $arr['order']);
+                if(is_array($arr['order'])){
+                    $order = Settings::instance()->arrayMergeRecursive($order, $arr['order']);
+                }else{
+                    //если строка
+                    $order[] = $arr['order'];
+                }
             }
             if($arr['order_direction']){
-                $order_direction = Settings::instance()->arrayMergeRecursive($order_direction, $arr['order_direction']);
+                if(is_array($arr['order_direction'])){
+                    $order_direction = Settings::instance()->arrayMergeRecursive($order_direction, $arr['order_direction']);
+                }else{
+                    $order_direction[] = $arr['order_direction'];
+                }
             }
 
         }else{
@@ -129,6 +144,28 @@ abstract class BaseAdmin extends BaseController
             'order' => $order,
             'order_direction' => $order_direction
         ]);
+
+    }
+
+    protected function expansion($args = []){
+
+        $fileName = explode('_' , $this->table);
+        $className = '';
+
+        foreach($fileName as $item){
+            $className .= ucfirst($item);
+        }
+
+        $class = Settings::get('expansion') . $className . 'Expansion';
+
+        if(is_readable($_SERVER['DOCUMENT_ROOT'] . PATH . $class . '.php')){
+
+            $class = str_replace('/', '\\', $class);
+
+            $exp = $class::instance();
+
+            $res = $exp->expansion($args);
+        }
 
     }
 }

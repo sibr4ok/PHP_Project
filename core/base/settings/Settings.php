@@ -41,6 +41,8 @@ class Settings{
 
     private $defaultTable = 'teachers';
 
+    private $expansion = 'core/admin/expansion/';
+
     static public function get($property){   //через get будем обращатся к приватным свойствам
         return self::instance()->$property;
     }

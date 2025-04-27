@@ -12,7 +12,9 @@ class ShowController extends BaseAdmin
 
         $this->createTableData();// определяет из какой таблицы тащить данные и выбирает колонки из таблицы
 
-        $this->createData(['fields' => ['content']]);// получает необходимые данные из текущей таблицы
+        $this->createData(['fields' => 'content']);// получает необходимые данные из текущей таблицы
+
+        return $this->expansion(get_defined_vars());
 
     }
 
