@@ -2,6 +2,7 @@
 
 namespace core\admin\controller;
 use core\base\settings\Settings;
+use core\base\settings\ShopSettings;
 
 class ShowController extends BaseAdmin
 {
