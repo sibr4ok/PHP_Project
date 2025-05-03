@@ -22,6 +22,14 @@ class ShowController extends BaseAdmin
 
     protected function outputData(){
 
+        $argc = func_get_arg(0);
+        $vars = $argc ? $argc : [];
+
+        if(!$this->template) $this->template = ADMIN_TEMPLATE . 'show';
+
+        $this->content = $this->render($this->template, $vars);
+
+        return parent::outputData();
     }
     
     //если массив arr пришел, то массив заносим в базовый запрос
