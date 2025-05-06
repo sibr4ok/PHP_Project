@@ -28,8 +28,8 @@ abstract class BaseAdmin extends BaseController
         $this->title = 'VG engine';
         
         if(!$this->model) $this->model = Model::instance();
-        if(!$this->menu) $this->menu = Settings::get('projecTables');
-        if(!$this->adminPath) $this->adminPath = Settings::get('routes')['admin']['alias'] . '/';
+        if(!$this->menu) $this->menu = Settings::get('projectTables');
+        if(!$this->adminPath) $this->adminPath = PATH . Settings::get('routes')['admin']['alias'] . '/';
 
         $this->sendNoCacheHeaders();//запрещяет сохранить кеш
 

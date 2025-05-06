@@ -43,6 +43,11 @@ class Settings{
 
     private $expansion = 'core/admin/expansion/';
 
+    private $projectTables = [
+        'teachers' => ['name' => 'Учителя', 'img' => 'pages.png'],
+        'students' => ['name' => 'Студенты']
+    ];
+
     static public function get($property){   //через get будем обращатся к приватным свойствам
         return self::instance()->$property;
     }
